@@ -1,0 +1,73 @@
+# 服务器端口
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# 数据源配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATABASE_URL:jdbc:mysql://rm-bp116boo932atg6qj2o.mysql.rds.aliyuncs.com:3306/kaban_diary?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      auto-commit: true
+      idle-timeout: 60000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+  # Jackson配置
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+
+# MyBatis Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.kaban.kabandiary.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# JWT配置
+jwt:
+  secret: kaban-diary-secret-key-2024-very-secure-secret-key-with-extra-padding-to-reach-512-bits
+  expiration: 86400000  # 24小时
+  header: Authorization
+  prefix: Bearer
+
+# 日志配置
+logging:
+  level:
+    com.kaban.kabandiary: debug
+    org.springframework.web: info
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n'
+
+# 文件上传配置
+file:
+  upload:
+    path: ${UPLOAD_PATH:/tmp/kaban-diary/uploads/}
+    max-size: 10MB
+
+# QAnything 配置
+qanything:
+  enabled: true
+  base-url: https://openapi.youdao.com/q_anything/api
+  api-key: qanything-huhasSe1B9QCNtUndEDmdZSAK9QkvHzM
+  bot-key: bot-1fnEZAEtHhUrjH7RN6LDOvOosy8Zv3KZ
+  bot-id: EB94CDDDB3724152
+  kb-id: KB9bf98ed989a64efcb7280c3f058a157e_240430
+  chat-path: /bot/chat_stream

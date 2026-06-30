@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡伴日记</title>
+    <script>
+        var token = localStorage.getItem('kaban_token');
+        if (token) {
+            window.location.href = 'main.html';
+        } else {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <p style="text-align:center;margin-top:40vh;font-family:sans-serif;color:#999;">正在跳转...</p>
+</body>
+</html>

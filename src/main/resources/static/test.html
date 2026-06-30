@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 测试页面</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 { margin-bottom: 20px; color: #333; }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+        .test-result {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+        .status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .status.offline { background: #999; color: white; }
+        .status.online { background: #4caf50; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 卡伴日记 API 测试</h1>
+
+        <!-- 后端状态检查 -->
+        <div class="test-section">
+            <div class="test-title">后端服务状态</div>
+            <div id="backendStatus">检查中...</div>
+        </div>
+
+        <!-- 登录测试 -->
+        <div class="test-section">
+            <div class="test-title">访客登录测试</div>
+            <button onclick="testLogin()">测试访客登录</button>
+            <div id="loginResult" class="test-result">等待测试...</div>
+        </div>
+
+        <!-- Token 测试 -->
+        <div class="test-section">
+            <div class="test-title">Token 测试</div>
+            <button onclick="testToken()">测试获取用户信息</button>
+            <div id="tokenResult" class="test-result">等待测试...</div>
+        </div>
+
+        <!-- 体重测试 -->
+        <div class="test-section">
+            <div class="test-title">体重管理测试</div>
+            <button onclick="testWeightStat()">测试获取体重统计</button>
+            <button onclick="testAddWeight()">测试添加体重记录</button>
+            <div id="weightResult" class="test-result">等待测试...</div>
+        </div>
+
+        <!-- 饮食测试 -->
+        <div class="test-section">
+            <div class="test-title">饮食管理测试</div>
+            <button onclick="testDietStat()">测试获取饮食统计</button>
+            <button onclick="testAddWater()">测试添加饮水</button>
+            <div id="dietResult" class="test-result">等待测试...</div>
+        </div>
+
+        <!-- 食谱测试 -->
+        <div class="test-section">
+            <div class="test-title">食谱测试</div>
+            <button onclick="testRecipes()">测试获取食谱</button>
+            <button onclick="testSearchRecipes()">测试搜索食谱</button>
+            <div id="recipeResult" class="result">等待测试...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080/api';
+        const TOKEN_KEY = 'kaban_token';
+
+        // 清空 Token
+        localStorage.removeItem(TOKEN_KEY);
+        console.log('Token 已清空，开始测试');
+
+        // 显示结果
+        function showResult(elementId, result, isError = false) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `<div class="${isError ? 'error' : 'success'}">${result}</div>`;
+        }
+
+        // 检查后端状态
+        async function checkBackend() {
+            const el = document.getElementById('backendStatus');
+            try {
+                const response = await fetch('http://localhost:8080/api');
+                const text = await response.text();
+                el.innerHTML = `<span class="status online">● 在线</span> ${text}`;
+                console.log('后端响应:', text);
+            } catch (error) {
+                el.innerHTML = `<span class="status offline">● 离线</span> 无法连接后端服务`;
+                showResult('backendStatus', `错误: ${error.message}`, true);
+            }
+        }
+
+        // 登录测试
+        async function testLogin() {
+            const resultEl = document.getElementById('loginResult');
+            resultEl.innerHTML = '<div>测试中...</div>';
+            console.log('[测试] 开始访客登录');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone: 'guest_' + Date.now(),
+                        verifyCode: '123456',
+                        loginType: 4
+                    })
+                });
+
+                console.log('[测试] 登录响应状态:', response.status);
+                const data = await response.json();
+                console.log('[测试] 登录响应数据:', data);
+
+                if (response.ok) {
+                    localStorage.setItem(TOKEN_KEY, data.data);
+                    showResult('loginResult', `✅ 登录成功\nToken: ${data.data.substring(0, 20)}...`);
+                    // 启用 Token 测试按钮
+                    document.querySelector('[onclick="testToken()"]').disabled = false;
+                } else {
+                    showResult('loginResult', `❌ 登录失败\n${response.status} ${data.message}`, true);
+                }
+            } catch (error) {
+                console.error('[测试] 登录错误:', error);
+                showResult('loginResult', `❌ 登录错误: ${error.message}`, true);
+            }
+        }
+
+        // Token 测试
+        async function testToken() {
+            const resultEl = document.getElementById('tokenResult');
+            resultEl.innerHTML = '<div>测试中...</div>';
+            const token = localStorage.getItem(TOKEN_KEY);
+
+            if (!token) {
+                showResult('tokenResult', '❌ 没有Token，请先登录', true);
+                return;
+            }
+
+            console.log('[测试] 使用Token:', token.substring(0, 20) + '...');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/user/info`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('[测试] 用户信息响应状态:', response.status);
+                const data = await response.json();
+                console.log('[测试] 用户信息数据:', data);
+
+                if (response.ok) {
+                    showResult('tokenResult', `✅ 获取用户信息成功\n${JSON.stringify(data.data, null, 2)}`);
+                } else {
+                    showResult('tokenResult', `❌ 获取失败\n${response.status} ${data.message}`, true);
+                }
+            } catch (error) {
+                console.error('[测试] Token测试错误:', error);
+                showResult('tokenResult', `❌ 错误: ${error.message}`, true);
+            }
+        }
+
+        // 体重测试
+        async function testWeightStat() {
+            const resultEl = document.getElementById('weightResult');
+            resultEl.innerHTML = '<div>测试中...</div>';
+            const token = localStorage.getItem(TOKEN_KEY);
+
+            if (!token) {
+                showResult('weightResult', '❌ 没有Token，请先登录', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/weight/stat`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                console.log('[测试] 体重统计数据:', data);
+
+                if (response.ok) {
+                    showResult('weightResult', `✅ 获取体重统计成功\n${JSON.stringify(data.data, null, 2)}`);
+                } else {
+                    showResult('weightResult', `❌ 获取失败\n${data.message}`, true);
+                }
+            } catch (error) {
+                console.error('[测试] 体重测试错误:', error);
+                showResult('weightResult', `❌ 错误: ${error.message}`, true);
+            }
+        }
+
+        async function testAddWeight() {
+            const resultEl = document.getElementById('weightResult');
+            resultEl.innerHTML = '<div>测试中...</div>';
+            const token = localStorage.getItem(TOKEN_KEY);
+
+            if (!token) {
+                showResult('weightResult', '❌ 没有Token，请先登录', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/weight/record?weight=70.5&bodyFatRate=18`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                console.log('[测试] 添加体重响应:', data);
+
+                if (response.ok) {
+                    showResult('weightResult', `✅ 添加体重记录成功`);
+                } else {
+                    showResult('weightResult', `❌ 添加失败\n${data.message}`, true);
+                }
+            } catch (error) {
+                console.error('[测试] 添加体重错误:', error);
+                showResult('weightResult', `❌ 错误: ${error.message}`, true);
+            }
+        }
+
+        // 饮食测试
+        async function testDietStat() {
+            const resultEl = document.getElementById('dietResult');
+            resultEl.innerHTML = '<div>测试中...</div>';
+            const token = localStorage.getItem(TOKEN_KEY);
+
+            if (!token) {
+                showResult('dietResult', '❌ 没有Token，请先登录', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/diet/stat`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                console.log('[测试] 饮食统计数据:', data);
+
+                if (response.ok) {
+                    showResult('dietResult', `✅ 获取饮食统计成功\n${JSON.stringify(data.data, null, 2)}`);
+                } else {
+                    showResult('dietResult', `❌ 获取失败\n${data.message}`, true);
+                }
+            } catch (error) {
+                console.error('[测试] 饮食测试错误:', error);
+                showResult('dietResult', `❌ 错误: ${error.message}`, true);
+            }
+        }
+
+        async function testAddWater() {
+            const resultEl = document.getElementById('dietResult');
+            resultEl.innerHTML = '<div>测试中...</div>';
+            const token = localStorage.getItem(TOKEN_KEY);
+
+            if (!token) {
+                showResult('dietResult', '❌ 没有Token，请先登录', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/water/add?amount=250`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                console.log('[测试] 添加饮水响应:', data);
+
+                if (response.ok) {
+                    showResult('dietResult', `✅ 添加饮水成功\n${JSON.stringify(data.data, null, 2)}`);
+                } else {
+                    showResult('dietResult', `❌ 添加失败\n${data.message}`, true);
+                }
+            } catch (error) {
+                console.error('[测试] 添加饮水错误:', error);
+                showResult('dietResult', `❌ 错误: ${error.message}`, true);
+            }
+        }
+
+        // 食谱测试
+        async function testRecipes() {
+            const resultEl = document.getElementById('recipeResult');
+            resultEl.innerHTML = '<div>测试中...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/recipe/hot?limit=5`);
+                const data = await response.json();
+                console.log('[测试] 食谱数据:', data);
+
+                if (response.ok) {
+                    showResult('recipeResult', `✅ 获取食谱成功\n共 ${data.data.length} 条食谱`);
+                } else {
+                    showResult('recipeResult', `❌ 获取失败\n${data.message}`, true);
+                }
+            } catch (error) {
+                console.error('[测试] 食谱错误:', error);
+                showResult('recipeResult', `❌ 错误: ${error.message}`, true);
+            }
+        }
+
+        async function testSearchRecipes() {
+            const resultEl = document.getElementById('recipeResult');
+            resultEl.innerHTML = '<div>测试中...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/recipe/search?keyword=鸡胸肉`);
+                const data = await response.json();
+                console.log('[测试] 搜索结果:', data);
+
+                if (response.ok) {
+                    showResult('recipeResult', `✅ 搜索成功\n找到 ${data.data.length} 条结果`);
+                } else {
+                    showResult('recipeResult', `❌ 搜索失败\n${data.message}`, true);
+                }
+            } catch (error) {
+                console.error('[测试] 搜索错误:', error);
+                showResult('recipeResult', `❌ 错误: ${error.message}`, true);
+            }
+        }
+
+        // 页面加载时检查后端
+        window.onload = function() {
+            checkBackend();
+        };
+    </script>
+</body>
+</html>

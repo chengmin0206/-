@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡伴日记 - 首页</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-decor-top"></div>
+        <div class="splash-decor-bottom"></div>
+        <div class="splash-leaf"><img src="ui页面设计素材/饮食记录页/水杯.svg" alt="" width="24" height="24"></div>
+        <div class="splash-leaf"><img src="ui页面设计素材/AI聊天页面/聊天头像.png" alt="" width="24" height="24"></div>
+        <div class="splash-leaf"><img src="ui页面设计素材/饮食记录页/杠铃.svg" alt="" width="24" height="24"></div>
+        <div class="splash-leaf"><img src="ui页面设计素材/食谱页/restaurant-2-fill.svg" alt="" width="24" height="24"></div>
+        <div class="splash-logo"><img src="ui页面设计素材/导航栏/底部中间图标（廖米）.png" alt="" width="60" height="60" onerror="this.outerHTML='🌿'"></div>
+        <div class="splash-title">卡伴日记</div>
+        <div class="splash-subtitle">记录生活，珍藏美好</div>
+        <button class="splash-btn" onclick="enterApp()">开始使用</button>
+    </div>
+
+    <div class="main-container" id="mainApp" style="display: none;">
+        <div class="content-area" id="contentArea"></div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" data-page="weight" onclick="switchPage('weight')">
+                <img src="ui页面设计素材/导航栏/体重图标（点击）.svg" alt="体重" width="24" height="24" class="nav-icon-active" onerror="this.outerHTML='<svg viewBox=\'0 0 1024 1024\' width=\'24\' height=\'24\'><path d=\'M915.4 533c-17.1 0-31 13.9-31 31v248.1c0 39.9-32.5 72.4-72.4 72.4H212.4c-39.9 0-72.4-32.5-72.4-72.4V564c0-17.1-13.9-31-31-31s-31 13.9-31 31v248.1c0 74.1 60.3 134.4 134.4 134.4h599.7c74.1 0 134.4-60.3 134.4-134.4V564c0-17.1-13.9-31-31-31z\' fill=\'currentColor\'/></svg>'">
+                <span>体重</span>
+            </div>
+            <div class="nav-item" data-page="diet" onclick="switchPage('diet')">
+                <img src="ui页面设计素材/导航栏/饮食（未点击）.svg" alt="饮食" width="24" height="24" class="nav-icon" onerror="this.outerHTML='<svg viewBox=\'0 0 1024 1024\' width=\'24\' height=\'24\'><path d=\'M834.8 440.2c-2.7-17-18.6-28.6-35.7-25.9-1.3 0.2-130.9 20.5-286.9 20.5-156 0-285.6-20.3-286.9-20.5-17.1-2.7-33 8.9-35.7 25.9-2.7 17 8.9 33 25.9 35.7 5.5 0.9 135.5 21.2 296.7 21.2s291.2-20.4 296.7-21.2c17-2.7 28.6-18.7 25.9-35.7z\' fill=\'currentColor\'/></svg>'">
+                <span>饮食</span>
+            </div>
+            <div class="nav-item nav-item-center" data-page="chat" onclick="switchPage('chat')">
+                <div class="nav-center-btn">
+                    <img id="navAssistantIcon" src="ui页面设计素材/导航栏/底部中间图标（廖米）.png" alt="助手" onerror="this.style.display='none';this.parentElement.innerHTML='💬'">
+                </div>
+                <span>助手</span>
+            </div>
+            <div class="nav-item" data-page="recipes" onclick="switchPage('recipes')">
+                <img src="ui页面设计素材/导航栏/食谱 (未点击).svg" alt="食谱" width="24" height="24" class="nav-icon" onerror="this.outerHTML='<svg viewBox=\'0 0 1024 1024\' width=\'24\' height=\'24\'><path d=\'M923.5 868h-823c-19.2 0-34.9-15.3-34.9-34.2V298c0-18.8 15.7-34.2 34.9-34.2h37.7v22.4H100.5c-6.9 0-12.5 5.3-12.5 11.8v535.8c0 6.5 5.6 11.8 12.5 11.8h823c6.9 0 12.5-5.3 12.5-11.8V298c0-6.5-5.6-11.8-12.5-11.8h-40.3v-22.4h40.3c19.2 0 34.9 15.3 34.9 34.2v535.8c0 18.8-15.7 34.2-34.9 34.2z\' fill=\'currentColor\'/></svg>'">
+                <span>食谱</span>
+            </div>
+            <div class="nav-item" data-page="profile" onclick="switchPage('profile')">
+                <img src="ui页面设计素材/导航栏/我的-copy (未点击).svg" alt="我的" width="24" height="24" class="nav-icon" onerror="this.outerHTML='<svg viewBox=\'0 0 1024 1024\' width=\'24\' height=\'24\'><path d=\'M885.3 96c23.8 0 39.3 25 28.6 46.3a7024.8 7024.8 0 0 0-56.9 116.2A424.9 424.9 0 0 1 938.7 509.6c0 235.6-191 426.7-426.7 426.7S85.3 745.2 85.3 509.6c0-235.6 191-426.7 426.7-426.7 69.5 0 136 16.6 196.5 47.9C762.5 107.6 821.5 96 885.3 96z\' fill=\'currentColor\'/></svg>'">
+                <span>我的</span>
+            </div>
+        </nav>
+    </div>
+
+    <div class="modal-overlay" id="addFoodModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">添加饮食记录</span>
+                <span class="modal-close" onclick="closeAddFoodModal()">✕</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label>食物名称 <span style="color:#ff4d4f;">*</span></label>
+                    <input type="text" id="foodNameInput" placeholder="如：米饭、鸡胸肉">
+                </div>
+                <div class="modal-form-group">
+                    <label>餐次 <span style="color:#ff4d4f;">*</span></label>
+                    <div class="meal-type-selector">
+                        <div class="meal-type-option active" data-meal="1" onclick="selectMealType(this)">🌅 早餐</div>
+                        <div class="meal-type-option" data-meal="2" onclick="selectMealType(this)">☀️ 午餐</div>
+                        <div class="meal-type-option" data-meal="3" onclick="selectMealType(this)">🌙 晚餐</div>
+                        <div class="meal-type-option" data-meal="4" onclick="selectMealType(this)">🍪 加餐</div>
+                    </div>
+                </div>
+                <div class="modal-form-group">
+                    <label>食用量 (g) <span style="color:#ff4d4f;">*</span></label>
+                    <input type="number" id="foodAmountInput" placeholder="如：200" step="1" min="1">
+                </div>
+                <div class="modal-form-row">
+                    <div class="modal-form-group modal-form-half">
+                        <label>热量 (kcal)</label>
+                        <input type="number" id="foodCalorieInput" placeholder="选填" step="0.1">
+                    </div>
+                    <div class="modal-form-group modal-form-half">
+                        <label>蛋白质 (g)</label>
+                        <input type="number" id="foodProteinInput" placeholder="选填" step="0.1">
+                    </div>
+                </div>
+                <div class="modal-form-row">
+                    <div class="modal-form-group modal-form-half">
+                        <label>脂肪 (g)</label>
+                        <input type="number" id="foodFatInput" placeholder="选填" step="0.1">
+                    </div>
+                    <div class="modal-form-group modal-form-half">
+                        <label>碳水 (g)</label>
+                        <input type="number" id="foodCarbInput" placeholder="选填" step="0.1">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" onclick="closeAddFoodModal()">取消</button>
+                <button class="modal-btn modal-btn-confirm" onclick="saveDietRecord()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        window.onload = function() {
+            console.log('[main.html] 检查登录状态...');
+            const token = getToken();
+            console.log('[main.html] Token:', token ? '有值' : '无值');
+
+            if (!token) {
+                console.log('[main.html] 未登录，跳转到登录页面');
+                window.location.href = 'login.html';
+            } else {
+                console.log('[main.html] 已登录，加载应用');
+                try {
+                    enterApp();
+                } catch (error) {
+                    console.error('[main.html] 进入应用失败:', error);
+                    alert('应用加载失败，请刷新重试或重新登录');
+                }
+            }
+        };
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

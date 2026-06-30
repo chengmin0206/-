@@ -1,0 +1,30 @@
+# Compiled
+target/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temp
+*.tmp
+*.bak
+
+# Maven
+apache-maven-*/
+
+# Uploads
+uploads/
+
+# Sensitive
+*.env

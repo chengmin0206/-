@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡伴日记 - 登录/注册</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .login-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #CCF494 0%, #E1FAB8 15%, #E2FBBA 25%, #E8FAC8 40%, #EBFBCA 55%, #FEFEFE 80%, #FFFFFF 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .login-logo h1 {
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .login-type-toggle {
+            display: flex;
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 25px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .toggle-btn.active {
+            background: white;
+            color: #47D07E;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .form-input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #47D07E;
+            box-shadow: 0 0 0 3px rgba(71, 208, 126, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #ccc;
+        }
+
+        .verify-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 14px;
+            background: #47D07E;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .verify-btn:hover {
+            background: #36C46F;
+        }
+
+        .verify-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            font-size: 20px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #47D07E 0%, #36C46F 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(71, 208, 126, 0.4);
+        }
+
+        .login-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .login-form {
+            display: none;
+        }
+
+        .login-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #f0f0f0;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: #47D07E;
+        }
+
+        .social-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .wechat-btn svg {
+            fill: #07c160;
+        }
+
+        .qq-btn svg {
+            fill: #12b7f5;
+        }
+
+        .guest-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .guest-link a {
+            color: #47D07E;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .guest-link a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            padding: 0 15px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .error-tip {
+            color: #ff4757;
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .error-tip.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 30px 20px;
+            }
+
+            .login-logo h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-box">
+            <div class="login-logo">
+                <h1>📝 卡伴日记</h1>
+            </div>
+            <p class="login-subtitle">记录生活，珍藏美好</p>
+
+            <!-- 登录方式切换 -->
+            <div class="login-type-toggle">
+                <button class="toggle-btn active" onclick="switchLoginType('code')">验证码登录</button>
+                <button class="toggle-btn" onclick="switchLoginType('password')">密码登录</button>
+            </div>
+
+            <!-- 验证码登录表单 -->
+            <div class="login-form active" id="codeLoginForm">
+                <div class="form-group">
+                    <label>手机号</label>
+                    <input type="tel" class="form-input" id="codePhone" placeholder="请输入手机号" maxlength="11">
+                    <div class="error-tip" id="codePhoneError"></div>
+                </div>
+                <div class="form-group">
+                    <label>验证码</label>
+                    <div class="form-input-wrapper">
+                        <input type="text" class="form-input" id="verifyCode" placeholder="请输入验证码" maxlength="6" style="padding-right: 100px;">
+                        <button class="verify-btn" onclick="sendVerifyCode()">获取验证码</button>
+                    </div>
+                    <div class="error-tip" id="verifyCodeError"></div>
+                </div>
+                <button class="login-btn" onclick="handleCodeLogin()">登录/注册</button>
+            </div>
+
+            <!-- 密码登录表单 -->
+            <div class="login-form" id="passwordLoginForm">
+                <div class="form-group">
+                    <label>手机号</label>
+                    <input type="tel" class="form-input" id="passwordPhone" placeholder="请输入手机号" maxlength="11">
+                    <div class="error-tip" id="passwordPhoneError"></div>
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <div class="form-input-wrapper">
+                        <input type="password" class="form-input" id="password" placeholder="请输入密码（至少6位）" maxlength="20">
+                        <button class="password-toggle" onclick="togglePassword()">👁️</button>
+                    </div>
+                    <div class="error-tip" id="passwordError"></div>
+                </div>
+                <button class="login-btn" onclick="handlePasswordLogin()">登录</button>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="javascript:void(0)" onclick="showRegister()" style="color: #47D07E; font-size: 13px; text-decoration: none;">还没有账号？立即注册</a>
+                </div>
+            </div>
+
+            <!-- 注册表单 -->
+            <div class="login-form" id="registerForm">
+                <div class="form-group">
+                    <label>手机号</label>
+                    <input type="tel" class="form-input" id="registerPhone" placeholder="请输入手机号" maxlength="11">
+                    <div class="error-tip" id="registerPhoneError"></div>
+                </div>
+                <div class="form-group">
+                    <label>验证码</label>
+                    <div class="form-input-wrapper">
+                        <input type="text" class="form-input" id="registerVerifyCode" placeholder="请输入验证码" maxlength="6" style="padding-right: 100px;">
+                        <button class="verify-btn" onclick="sendRegisterVerifyCode()">获取验证码</button>
+                    </div>
+                    <div class="error-tip" id="registerVerifyCodeError"></div>
+                </div>
+                <div class="form-group">
+                    <label>设置密码</label>
+                    <div class="form-input-wrapper">
+                        <input type="password" class="form-input" id="registerPassword" placeholder="请输入密码（至少6位）" maxlength="20">
+                        <button class="password-toggle" onclick="toggleRegisterPassword()">👁️</button>
+                    </div>
+                    <div class="error-tip" id="registerPasswordError"></div>
+                </div>
+                <div class="form-group">
+                    <label>确认密码</label>
+                    <div class="form-input-wrapper">
+                        <input type="password" class="form-input" id="confirmPassword" placeholder="请再次输入密码" maxlength="20">
+                    </div>
+                    <div class="error-tip" id="confirmPasswordError"></div>
+                </div>
+                <button class="login-btn" onclick="handleRegister()">注册</button>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="javascript:void(0)" onclick="showPasswordLogin()" style="color: #47D07E; font-size: 13px; text-decoration: none;">已有账号？返回登录</a>
+                </div>
+            </div>
+
+            <div class="divider">
+                <span>其他登录方式</span>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn wechat-btn" onclick="handleWechatLogin()" title="微信登录">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.277.842c-.092.28-.188.56-.188.57 0 .22.18.394.394.394a.39.39 0 0 0 .154-.034l1.394-.613a.59.59 0 0 1 .293-.046c.327.036.658.054.994.054.283 0 .563-.013.84-.038a7.193 7.193 0 0 1-.276-1.965c0-3.8 3.503-6.873 7.82-6.873.265 0 .527.013.785.037C14.866 4.377 12.08 2.188 8.691 2.188zm-2.6 4.408c-.622 0-1.126-.504-1.126-1.126s.504-1.126 1.126-1.126 1.126.504 1.126 1.126-.504 1.126-1.126 1.126zm5.2 0c-.622 0-1.126-.504-1.126-1.126s.504-1.126 1.126-1.126 1.126.504 1.126 1.126-.504 1.126-1.126 1.126zm5.574 3.524c-3.734 0-6.765 2.606-6.765 5.823 0 3.216 3.031 5.822 6.765 5.822.3 0 .595-.017.886-.05a.59.59 0 0 1 .293.047l1.393.613a.39.39 0 0 0 .154.034c.214 0 .394-.174.394-.394 0-.01-.096-.29-.188-.57l-.277-.842a.59.59 0 0 1 .213-.665c1.832-1.347 3.002-3.338 3.002-5.55 0-3.216-3.031-5.822-6.765-5.822l-.001.004zm-2.6 3.908c-.622 0-1.126-.504-1.126-1.126s.504-1.126 1.126-1.126 1.126.504 1.126 1.126-.504 1.126-1.126 1.126zm5.2 0c-.622 0-1.126-.504-1.126-1.126s.504-1.126 1.126-1.126 1.126.504 1.126 1.126-.504 1.126-1.126 1.126z"/>
+                    </svg>
+                </button>
+                <button class="social-btn qq-btn" onclick="handleQQLogin()" title="QQ登录">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12.003 2c-2.265 0-4.338.864-5.894 2.282-1.556 1.418-2.573 3.378-2.794 5.594-.22 2.216.378 4.336 1.592 6.068 1.214 1.732 3.014 3.014 5.148 3.556l.312.08c-.12.348-.264.748-.44 1.16-.264.624-.576 1.284-.876 1.776-.3.492-.576.852-.816 1.044-.12.096-.228.156-.312.168-.084.012-.156-.012-.228-.072-.144-.12-.264-.36-.324-.636-.06-.276-.06-.612.012-.96.06-.348.18-.72.36-1.068l.312-.624c-.96-.192-1.86-.54-2.688-1.008-1.32-.744-2.424-1.812-3.192-3.12-.768-1.308-1.2-2.82-1.2-4.416 0-2.064.78-3.936 2.064-5.352C4.393 3.028 6.265 2.068 8.329 1.636 10.393 1.204 12.553 1.3 14.449 2.044c1.896.744 3.504 2.112 4.536 3.936 1.032 1.824 1.392 3.948 1.08 6.024-.312 2.076-1.26 3.96-2.724 5.388-1.464 1.428-3.396 2.364-5.484 2.604l.18.468c.18.492.312 1.008.348 1.512.036.504-.024.984-.204 1.38-.18.396-.492.72-.924.9-.432.18-.924.204-1.404.072-.48-.132-.924-.42-1.284-.828-.36-.408-.636-.924-.816-1.512l-.168-.552c-.552-.144-1.08-.348-1.584-.6l.576.132c.168.048.336.096.504.132l.012.012c.324.072.648.12.984.144.336.024.672.012 1.008-.036.336-.048.66-.132.972-.264.312-.132.612-.312.876-.54.264-.228.492-.504.684-.816.192-.312.336-.66.432-1.032l.144-.552c.912-.228 1.776-.588 2.568-1.068 1.32-.792 2.4-1.908 3.132-3.24.732-1.332 1.128-2.844 1.128-4.404 0-1.56-.396-3.072-1.128-4.404-.732-1.332-1.812-2.448-3.132-3.24-1.32-.792-2.844-1.248-4.404-1.32V2z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="guest-link">
+                <a href="javascript:void(0)" onclick="handleGuestLogin()">继续以访客身份访问</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载遮罩 -->
+    <div class="loading" id="loading">
+        <div style="text-align: center; color: white;">
+            <div style="font-size: 48px; margin-bottom: 20px;">🔄</div>
+            <div>加载中...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080';
+        const TOKEN_KEY = 'kaban_token';
+        let currentLoginType = 'code';
+
+        // 显示/隐藏加载
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('active');
+        }
+
+        // 保存 Token
+        function setToken(token) {
+            localStorage.setItem(TOKEN_KEY, token);
+        }
+
+        // 显示错误提示
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // 清除所有错误提示
+        function clearErrors() {
+            document.querySelectorAll('.error-tip').forEach(el => {
+                el.classList.remove('show');
+            });
+        }
+
+        // 切换登录方式
+        function switchLoginType(type) {
+            currentLoginType = type;
+            clearErrors();
+
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.querySelectorAll('.login-form').forEach(form => {
+                form.classList.remove('active');
+            });
+
+            if (type === 'code') {
+                document.querySelector('.toggle-btn:first-child').classList.add('active');
+                document.getElementById('codeLoginForm').classList.add('active');
+            } else {
+                document.querySelector('.toggle-btn:last-child').classList.add('active');
+                document.getElementById('passwordLoginForm').classList.add('active');
+            }
+        }
+
+        // 显示注册表单
+        function showRegister() {
+            clearErrors();
+            document.querySelectorAll('.login-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById('registerForm').classList.add('active');
+        }
+
+        // 显示密码登录表单
+        function showPasswordLogin() {
+            clearErrors();
+            document.querySelectorAll('.login-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById('passwordLoginForm').classList.add('active');
+        }
+
+        // 切换密码可见性
+        function togglePassword() {
+            const input = document.getElementById('password');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function toggleRegisterPassword() {
+            const input = document.getElementById('registerPassword');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // 手机号验证
+        function validatePhone(phone) {
+            return /^1[3-9]\d{9}$/.test(phone);
+        }
+
+        // 通用请求
+        async function apiRequest(url, options = {}) {
+            const token = localStorage.getItem(TOKEN_KEY);
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}${url}`, {
+                    ...options,
+                    headers
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || '请求失败');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API 请求错误:', error);
+                throw error;
+            }
+        }
+
+        // 发送验证码
+        async function sendVerifyCode() {
+            const phone = document.getElementById('codePhone').value.trim();
+
+            if (!validatePhone(phone)) {
+                showError('codePhoneError', '请输入正确的手机号');
+                return;
+            }
+
+            const btn = event.target;
+            btn.disabled = true;
+
+            try {
+                await apiRequest('/auth/verify-code?phone=' + phone, {
+                    method: 'POST'
+                });
+                alert('验证码已发送，测试环境请使用: 123456');
+                startCountdown(btn);
+            } catch (error) {
+                showError('codePhoneError', error.message);
+                btn.disabled = false;
+            }
+        }
+
+        // 发送注册验证码
+        async function sendRegisterVerifyCode() {
+            const phone = document.getElementById('registerPhone').value.trim();
+
+            if (!validatePhone(phone)) {
+                showError('registerPhoneError', '请输入正确的手机号');
+                return;
+            }
+
+            const btn = event.target;
+            btn.disabled = true;
+
+            try {
+                await apiRequest('/auth/verify-code?phone=' + phone, {
+                    method: 'POST'
+                });
+                alert('验证码已发送，测试环境请使用: 123456');
+                startCountdown(btn);
+            } catch (error) {
+                showError('registerPhoneError', error.message);
+                btn.disabled = false;
+            }
+        }
+
+        // 倒计时
+        function startCountdown(btn) {
+            let seconds = 60;
+            btn.textContent = `${seconds}s后重新获取`;
+            const timer = setInterval(() => {
+                seconds--;
+                btn.textContent = `${seconds}s后重新获取`;
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    btn.textContent = '获取验证码';
+                    btn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        // 验证码登录
+        async function handleCodeLogin() {
+            clearErrors();
+            const phone = document.getElementById('codePhone').value.trim();
+            const verifyCode = document.getElementById('verifyCode').value.trim();
+
+            if (!validatePhone(phone)) {
+                showError('codePhoneError', '请输入正确的手机号');
+                return;
+            }
+
+            if (!verifyCode) {
+                showError('verifyCodeError', '请输入验证码');
+                return;
+            }
+
+            showLoading();
+            try {
+                const data = await apiRequest('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        phone: phone,
+                        verifyCode: verifyCode,
+                        loginType: 1
+                    })
+                });
+
+                setToken(data.data);
+                window.location.href = 'main.html';
+            } catch (error) {
+                hideLoading();
+                showError('verifyCodeError', error.message);
+            }
+        }
+
+        // 密码登录
+        async function handlePasswordLogin() {
+            clearErrors();
+            const phone = document.getElementById('passwordPhone').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!validatePhone(phone)) {
+                showError('passwordPhoneError', '请输入正确的手机号');
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                showError('passwordError', '密码长度不能少于6位');
+                return;
+            }
+
+            showLoading();
+            try {
+                const data = await apiRequest('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        phone: phone,
+                        password: password,
+                        loginType: 5
+                    })
+                });
+
+                setToken(data.data);
+                window.location.href = 'main.html';
+            } catch (error) {
+                hideLoading();
+                showError('passwordError', error.message);
+            }
+        }
+
+        // 注册
+        async function handleRegister() {
+            clearErrors();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const verifyCode = document.getElementById('registerVerifyCode').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!validatePhone(phone)) {
+                showError('registerPhoneError', '请输入正确的手机号');
+                return;
+            }
+
+            if (!verifyCode) {
+                showError('registerVerifyCodeError', '请输入验证码');
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                showError('registerPasswordError', '密码长度不能少于6位');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('confirmPasswordError', '两次输入的密码不一致');
+                return;
+            }
+
+            showLoading();
+            try {
+                await apiRequest('/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}&verifyCode=${encodeURIComponent(verifyCode)}`
+                });
+
+                alert('注册成功，请使用密码登录');
+                showPasswordLogin();
+            } catch (error) {
+                hideLoading();
+                showError('registerPhoneError', error.message);
+            }
+        }
+
+        // 访客登录
+        async function handleGuestLogin() {
+            showLoading();
+            try {
+                const data = await apiRequest('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        phone: 'guest_' + Date.now(),
+                        verifyCode: '123456',
+                        loginType: 4
+                    })
+                });
+
+                setToken(data.data);
+                window.location.href = 'main.html';
+            } catch (error) {
+                hideLoading();
+                alert('登录失败: ' + error.message);
+            }
+        }
+
+        // 微信登录
+        async function handleWechatLogin() {
+            showLoading();
+            try {
+                const data = await apiRequest('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        phone: 'wechat_' + Date.now(),
+                        verifyCode: '123456',
+                        loginType: 2,
+                        nickname: '微信用户',
+                        avatar: 'https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLk3Lm7LTsgo7WA/132'
+                    })
+                });
+
+                setToken(data.data);
+                window.location.href = 'main.html';
+            } catch (error) {
+                hideLoading();
+                alert('登录失败: ' + error.message);
+            }
+        }
+
+        // QQ登录
+        async function handleQQLogin() {
+            showLoading();
+            try {
+                const data = await apiRequest('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        phone: 'qq_' + Date.now(),
+                        verifyCode: '123456',
+                        loginType: 3,
+                        nickname: 'QQ用户',
+                        avatar: 'https://q1.qlogo.cn/g?b=qq&nk=9056&nt=1'
+                    })
+                });
+
+                setToken(data.data);
+                window.location.href = 'main.html';
+            } catch (error) {
+                hideLoading();
+                alert('登录失败: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
